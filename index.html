@@ -13,10 +13,12 @@
             </div>
             <div id="right-toolbar">
                 <div id="buttons">
-                    <button class="button"><img src="plus.png" alt="add" width="40px" /></button>
+                    <button class="button">
+                        <img src="./assets/plus.png" alt="add" width="40px" />
+                    </button>
                     <!-- <button class="button">hide</button> -->
                     <button class="button">
-                        <img src="trash.png" alt="delete" width="40px" />
+                        <img src="./assets/trash.png" alt="delete" width="40px" />
                     </button>
                 </div>
                 <div id="shapes-list">
@@ -32,13 +34,16 @@
             <div class="modal-box">
                 <p id="modal-text">Wybierz opcję:</p>
                 <div class="modal-buttons">
-                    <button data-value="lightsource">Light Source</button>
-                    <button data-value="Rectangle">Rectangle</button>
-                    <button data-value="circle">Circle</button>
-                    <button data-value="cancel">Cancel</button>
+                    <button data-value="0">Light Source</button>
+                    <button data-value="1">Rectangle</button>
+                    <button data-value="2">Circle</button>
+                    <button data-value="3">Cancel</button>
                 </div>
             </div>
         </div>
-        <script src="app.js"></script>
+        <script type="module" src="./app.js"></script>
+        <!-- <script type="module" src="./objects/lights.js"></script>
+        <script type="module" src="./objects/obstacle.js"></script>
+        <script type="module" src="./objects/scene.js"></script> -->
     </body>
 </html>
