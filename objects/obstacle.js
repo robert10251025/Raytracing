@@ -1,5 +1,6 @@
 export class Rectangle {
-    constructor(x, y, w, h, color) {
+    constructor(id, x, y, w, h, color) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.w = w;
@@ -11,7 +12,8 @@ export class Rectangle {
 }
 
 export class Circle {
-    constructor(x, y, r, color) {
+    constructor(id, x, y, r, color) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.r = r;

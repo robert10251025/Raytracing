@@ -25,7 +25,21 @@
                     <h2>List Objects:</h2>
                     <canvas id="shapes"></canvas>
                 </div>
-                <div id="shape-options"><h2>Options:</h2></div>
+                <div id="shape-options">
+                    <h2>Options:</h2>
+                    <div id="light-options" class="hidden">
+                        <label for="ray">Rays amount: <span id="ray-value">200</span></label
+                        ><input
+                            type="range"
+                            name="ray"
+                            id="input-ray"
+                            min="4"
+                            max="500"
+                            step="1"
+                            value="200"
+                        />
+                    </div>
+                </div>
             </div>
         </div>
 

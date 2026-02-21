@@ -72,8 +72,8 @@ export default class Scene {
     }
 
     render(c, width, height) {
-        this.drawLights(c);
         this.drawRays(c, width, height);
+        this.drawLights(c);
     }
 
     update(x, y) {
@@ -86,6 +86,7 @@ export default class Scene {
         if (activeLight[0]) {
             activeLight[0].x = x;
             activeLight[0].y = y;
+            activeLight[0].color = '#f4f6ccff';
 
             // update rays of active light
             const lightRays = this.rays.filter((ray) => {
