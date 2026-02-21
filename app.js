@@ -24,11 +24,13 @@ mainCanvas.addEventListener('click', (e) => {
             if (light.isActive === false) {
                 light.color = '#ffffff';
                 boxOptions.classList.add('hidden');
+                activeLight = null;
             } else {
                 rayValue.textContent = light.amountRay;
                 inputRay.value = light.amountRay;
                 boxOptions.classList.remove('hidden');
-                editLightOption(light);
+                activeLight = light;
+                // editLightOption(light);
             }
 
             // it's never happend now, but when i add list of object it will be useful
@@ -72,19 +74,18 @@ addBtn.onclick = async () => {
 
 const deleteBtn = document.querySelector('#buttons button:nth-of-type(2)');
 deleteBtn.addEventListener('click', () => {
-    const activeLight = scene.lights.filter((light) => {
-        return light.isActive;
-    });
-    if (activeLight[0]) {
-        const ind = scene.lights.lastIndexOf(activeLight[0]);
+    if (activeLight) {
+        const ind = scene.lights.lastIndexOf(activeLight);
 
         // delete rays of deleted light
-        deleteRays(activeLight[0]);
+        deleteRays(activeLight);
 
         // delete active light
         scene.lights.splice(ind, 1);
 
         boxOptions.classList.add('hidden');
+
+        activeLight = null;
     }
 });
 
@@ -93,15 +94,23 @@ const boxOptions = document.getElementById('light-options');
 const inputRay = document.getElementById('input-ray');
 const rayValue = document.getElementById('ray-value');
 
-// inputRay.addEventListener('input', (e) => {
+inputRay.addEventListener('input', (e) => {
+    if (!activeLight) return;
 
-// })
+    deleteRays(activeLight);
+
+    const val = Number(e.target.value);
+
+    rayValue.textContent = val;
+    activeLight.amountRay = val;
+    scene.addRaysToArray(activeLight);
+});
 
 // --------------------  CONSTS AND VARIABLES  -----------------
 const scene = new Scene();
 let newPosX = null;
 let newPosY = null;
-let activeL = null;
+let activeLight = null;
 
 // --------------------  LOGIC  -----------------
 function showModal() {
@@ -120,21 +129,21 @@ function showModal() {
     });
 }
 
-function editLightOption(light) {
-    inputRay.addEventListener('input', (e) => {
-        if (light.isActive) {
-            deleteRays(light);
+// function editLightOption(light) {
+//     inputRay.addEventListener('input', (e) => {
+//         if (light.isActive) {
+//             deleteRays(light);
 
-            // ERROR: when i delete light and his rays, when i change amount of ray in second light, then deleted rays appers
+//             // ERROR: when i delete light and his rays, when i change amount of ray in second light, then deleted rays appers
 
-            rayValue.textContent = e.target.value;
-            light.amountRay = e.target.value;
-            scene.addRaysToArray(light);
-        }
-    });
+//             rayValue.textContent = e.target.value;
+//             light.amountRay = e.target.value;
+//             scene.addRaysToArray(light);
+//         }
+//     });
 
-    // TODO: radius length and color
-}
+//     // TODO: radius length and color
+// }
 
 function deleteRays(light) {
     scene.rays = scene.rays.filter((ray) => {
