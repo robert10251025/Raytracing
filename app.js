@@ -19,6 +19,13 @@ mainCanvas.addEventListener('click', (e) => {
     scene.lights.forEach((light) => {
         const sum = (e.clientX - light.x) ** 2 + (e.clientY - light.y) ** 2;
         if (sum <= light.r) {
+            // delete light when delete button is mark and light is clicked
+            if (isToDelete) {
+                deleteLightWithRays(light);
+                return;
+            }
+
+            // mark and unmark light
             light.isActive = !light.isActive;
 
             if (light.isActive === false) {
@@ -30,16 +37,7 @@ mainCanvas.addEventListener('click', (e) => {
                 inputRay.value = light.amountRay;
                 boxOptions.classList.remove('hidden');
                 activeLight = light;
-                // editLightOption(light);
             }
-
-            // it's never happend now, but when i add list of object it will be useful
-            // scene.lights.forEach((light2) => {
-            //     if (light2 != light) {
-            //         light2.isActive = false;
-            //         light2.color = '#ffffff';
-            //     }
-            // });
         }
     });
 });
@@ -72,20 +70,26 @@ addBtn.onclick = async () => {
     }
 };
 
-const deleteBtn = document.querySelector('#buttons button:nth-of-type(2)');
+const deleteBtn = document.getElementById('deleteBtn');
 deleteBtn.addEventListener('click', () => {
+    // if there is activeLight, will be deleted
     if (activeLight) {
         const ind = scene.lights.lastIndexOf(activeLight);
 
-        // delete rays of deleted light
-        deleteRays(activeLight);
-
-        // delete active light
-        scene.lights.splice(ind, 1);
-
-        boxOptions.classList.add('hidden');
+        deleteLightWithRays(activeLight);
 
         activeLight = null;
+        boxOptions.classList.add('hidden');
+    } else {
+        // if there isn't activeLight and user clicked on delete button
+        const imgDeleteButton = document.querySelector('#deleteBtn img');
+        if (!isToDelete) {
+            isToDelete = true;
+            imgDeleteButton.src = './assets/trash-red.png';
+        } else {
+            imgDeleteButton.src = './assets/trash.png';
+            isToDelete = false;
+        }
     }
 });
 
@@ -111,6 +115,7 @@ const scene = new Scene();
 let newPosX = null;
 let newPosY = null;
 let activeLight = null;
+let isToDelete = false;
 
 // --------------------  LOGIC  -----------------
 function showModal() {
@@ -129,37 +134,16 @@ function showModal() {
     });
 }
 
-// function editLightOption(light) {
-//     inputRay.addEventListener('input', (e) => {
-//         if (light.isActive) {
-//             deleteRays(light);
-
-//             // ERROR: when i delete light and his rays, when i change amount of ray in second light, then deleted rays appers
-
-//             rayValue.textContent = e.target.value;
-//             light.amountRay = e.target.value;
-//             scene.addRaysToArray(light);
-//         }
-//     });
-
-//     // TODO: radius length and color
-// }
-
 function deleteRays(light) {
     scene.rays = scene.rays.filter((ray) => {
         return ray.id != light.id;
     });
+}
 
-    // const raysToDelete = scene.rays.filter((ray) => {
-    //     return ray.id === light.id;
-    // });
-
-    // if (raysToDelete.length > 0) {
-    //     raysToDelete.forEach((ray) => {
-    //         const ind = scene.rays.indexOf(ray);
-    //         scene.rays.splice(ind, 1);
-    //     });
-    // }
+function deleteLightWithRays(light) {
+    const ind = scene.lights.indexOf(light);
+    deleteRays(light);
+    scene.lights.splice(ind, 1);
 }
 
 // --------------------  MAIN LOOP  -----------------
