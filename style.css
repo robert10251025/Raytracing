@@ -114,6 +114,26 @@ html, body {
     padding: 15px;
 }
 
+#light-options {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.light-row-option {
+    display: flex;
+    flex-direction: column;
+    margin-block: 20px;
+    align-items: center;
+}
+
+.light-row-option label {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+
+
 /* popup window  */
 .modal {
     position: fixed;

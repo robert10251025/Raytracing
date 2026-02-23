@@ -5,6 +5,7 @@ export default class Scene {
         this.obstacles = [];
         this.lights = [];
         this.rays = [];
+        this.miniLights = [];
     }
 
     addObstacle(o) {
@@ -71,7 +72,10 @@ export default class Scene {
         });
     }
 
-    render(c, width, height) {
+    renderMainCanvas(c, width, height) {
+        c.clearRect(0, 0, width, height);
+        c.fillStyle = '#000000';
+        c.fillRect(0, 0, width, height);
         this.drawRays(c, width, height);
         this.drawLights(c);
     }
@@ -98,5 +102,18 @@ export default class Scene {
                 ray.y = y;
             });
         }
+    }
+
+    renderListCanvas(c, width, height) {
+        const offsetY = 10;
+        c.clearRect(0, 0, width, height);
+        c.fillStyle = '#1a1a1a';
+        c.fillRect(0, 0, width, height);
+        this.lights.forEach((light, ind) => {
+            c.beginPath();
+            c.arc(width / 2, 50 * (ind + 1) + offsetY, 20, 0, Math.PI * 2);
+            c.fillStyle = light.color;
+            c.fill();
+        });
     }
 }

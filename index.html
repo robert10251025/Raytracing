@@ -13,7 +13,7 @@
             </div>
             <div id="right-toolbar">
                 <div id="buttons">
-                    <button class="button">
+                    <button id="addBtn" class="button">
                         <img src="./assets/plus.png" alt="add" width="40px" />
                     </button>
                     <!-- <button class="button">hide</button> -->
@@ -28,16 +28,36 @@
                 <div id="shape-options">
                     <h2>Options:</h2>
                     <div id="light-options" class="hidden">
-                        <label for="ray">Rays amount: <span id="ray-value">200</span></label
-                        ><input
-                            type="range"
-                            name="ray"
-                            id="input-ray"
-                            min="4"
-                            max="500"
-                            step="1"
-                            value="200"
-                        />
+                        <div class="light-row-option">
+                            <label for="ray">Rays amount: <span id="ray-value">200</span></label
+                            ><input
+                                type="range"
+                                name="ray"
+                                id="input-ray"
+                                min="4"
+                                max="500"
+                                step="1"
+                                value="200"
+                            />
+                        </div>
+
+                        <div class="light-row-option">
+                            <label for="radius">Radius: <span id="radius-value">20</span></label
+                            ><input
+                                type="range"
+                                name="radius"
+                                id="input-radius"
+                                min="5"
+                                max="100"
+                                step="1"
+                                value="20"
+                            />
+                        </div>
+
+                        <div class="light-row-option">
+                            <label for="color">Color: <span id="color-value"></span></label>
+                            <input type="color" name="color" id="input-color" value="#ffffff" />
+                        </div>
                     </div>
                 </div>
             </div>
