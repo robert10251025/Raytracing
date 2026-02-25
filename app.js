@@ -15,14 +15,12 @@ canvasList.width = 200;
 canvasList.height = canvasList.clientHeight;
 
 canvasList.addEventListener('click', (e) => {
+    const rect = canvasList.getBoundingClientRect();
     scene.lights.forEach((light) => {
-        const sum = (e.clientX - light.x) ** 2 + (e.clientY - light.y) ** 2;
-        if (sum <= light.r ** 2) {
-            light.isActive = !light.isActive;
-
-            if (light.isActive) {
-                activeLight = light;
-            }
+        const sum =
+            (e.clientX - rect.left - light.xList) ** 2 + (e.clientY - rect.top - light.yList) ** 2;
+        if (sum <= light.rList ** 2) {
+            clickLightHandling(light);
         }
     });
 });
@@ -37,30 +35,7 @@ mainCanvas.addEventListener('click', (e) => {
     scene.lights.forEach((light) => {
         const sum = (e.clientX - light.x) ** 2 + (e.clientY - light.y) ** 2;
         if (sum <= light.r ** 2) {
-            // delete light when delete button is mark and light is clicked
-            if (isToDelete) {
-                deleteLightWithRays(light);
-                canvasList.height = Math.min(canvasList.height, 50 * (scene.lights.length + 1));
-                return;
-            }
-
-            // mark and unmark light
-            light.isActive = !light.isActive;
-
-            if (light.isActive === false) {
-                light.color = inputColor.value;
-                boxOptions.classList.add('hidden');
-                activeLight = null;
-            } else {
-                rayValue.textContent = light.amountRay;
-                inputRay.value = light.amountRay;
-
-                radiusValue.textContent = light.r;
-                inputRadius.value = light.r;
-
-                boxOptions.classList.remove('hidden');
-                activeLight = light;
-            }
+            clickLightHandling(light);
         }
     });
 });
@@ -199,6 +174,36 @@ function deleteLightWithRays(light) {
     const ind = scene.lights.indexOf(light);
     deleteRays(light);
     scene.lights.splice(ind, 1);
+}
+
+function clickLightHandling(light) {
+    // delete light when delete button is mark and light is clicked
+    if (isToDelete) {
+        deleteLightWithRays(light);
+        canvasList.height = Math.min(canvasList.height, 50 * (scene.lights.length + 1));
+        boxOptions.classList.add('hidden');
+        return;
+    }
+
+    // mark and unmark light
+    light.isActive = !light.isActive;
+
+    if (light.isActive === false) {
+        light.color = inputColor.value;
+        boxOptions.classList.add('hidden');
+        activeLight = null;
+    } else {
+        rayValue.textContent = light.amountRay;
+        inputRay.value = light.amountRay;
+
+        radiusValue.textContent = light.r;
+        inputRadius.value = light.r;
+
+        inputColor.value = light.color;
+
+        boxOptions.classList.remove('hidden');
+        activeLight = light;
+    }
 }
 
 // --------------------  MAIN LOOP  -----------------

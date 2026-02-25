@@ -110,10 +110,10 @@ export default class Scene {
         c.fillStyle = '#1a1a1a';
         c.fillRect(0, 0, width, height);
         this.lights.forEach((light, ind) => {
-            c.beginPath();
-            c.arc(width / 2, 50 * (ind + 1) + offsetY, 20, 0, Math.PI * 2);
-            c.fillStyle = light.color;
-            c.fill();
+            light.xList = width / 2;
+            light.yList = 50 * (ind + 1) + offsetY;
+            light.rList = 20;
+            light.draw(c, light.xList, light.yList, light.rList, light.color);
         });
     }
 }
