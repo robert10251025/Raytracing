@@ -1,15 +1,22 @@
+import { Rectangle } from './obstacle.js';
+import { Circle } from './obstacle.js';
 import Ray from './ray.js';
 
 export default class Scene {
     constructor() {
-        this.obstacles = [];
+        this.obstaclesRect = [];
+        this.obstaclesCircle = [];
         this.lights = [];
         this.rays = [];
         this.miniLights = [];
     }
 
     addObstacle(o) {
-        this.obstacles.push(o);
+        if (o instanceof Rectangle) {
+            this.obstaclesRect.push(o);
+        } else {
+            this.obstaclesCircle.push(o);
+        }
     }
 
     addLight(l) {
@@ -64,11 +71,46 @@ export default class Scene {
                 if (xStart >= 0) {
                     l = Math.max(Math.sqrt((xStart - ray.x) ** 2 + (0 - ray.y) ** 2), l);
                 }
-                ray.draw(c, l);
             }
 
             // check obstacles <---- TODO
-            // ---------------------------
+            this.obstaclesRect.forEach((o) => {
+                // equation of straight line (obstacle)
+                const a2 = o.a;
+                const b2 = o.b;
+
+                // point of intersection ray and obstacle
+                const xInter = (b2 - b) / (a - a2);
+                const yInter = a * xInter + b;
+
+                const t = (xInter - ray.x) * ray.dx + (yInter - ray.y) * ray.dy;
+                if (t <= 0) return;
+
+                if (
+                    c.isPointInStroke(o.path, xInter, yInter) &&
+                    xInter >= 0 &&
+                    xInter <= w &&
+                    yInter >= 0 &&
+                    yInter <= h
+                ) {
+                    // c.save();
+                    // c.beginPath();
+                    // c.fillStyle = 'red';
+                    // c.arc(xInter, yInter, 5, 0, Math.PI * 2);
+                    // c.fill();
+                    // c.restore();
+                    const l1 = Math.sqrt((xInter - ray.x) ** 2 + (yInter - ray.y) ** 2);
+                    l = Math.min(l1, l);
+                }
+            });
+
+            ray.draw(c, l);
+        });
+    }
+
+    drawObsctacles(c) {
+        this.obstaclesRect.forEach((rect) => {
+            rect.drawRectLine(c);
         });
     }
 
@@ -78,6 +120,7 @@ export default class Scene {
         c.fillRect(0, 0, width, height);
         this.drawRays(c, width, height);
         this.drawLights(c);
+        this.drawObsctacles(c);
     }
 
     update(x, y) {

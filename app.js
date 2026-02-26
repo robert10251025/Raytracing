@@ -1,13 +1,19 @@
 /** @type {CanvasRenderingContext2D} */
 
-// ------------------------- IMPORTS  ---------------------------
+// ===============================================================
+// ========================= IMPORTS  ============================
+// ===============================================================
 import { Rectangle } from './objects/obstacle.js';
 import { Circle } from './objects/obstacle.js';
 import LightSource from './objects/light.js';
 import Scene from './objects/scene.js';
 import Ray from './objects/ray.js';
 
-// ----------------------  DOM ELEMENTS -------------------------
+// ===============================================================
+// ========================  DOM ELEMENTS ========================
+// ===============================================================
+
+// -------------------- LIST CANVAS EVENTS ------------------
 const canvasList = document.getElementById('shapes');
 /** @type {CanvasRenderingContext2D} */
 const cL = canvasList.getContext('2d');
@@ -25,6 +31,7 @@ canvasList.addEventListener('click', (e) => {
     });
 });
 
+// -------------------- MAIN CANVAS EVENTS ------------------
 const mainCanvas = document.getElementById('raytracing');
 /** @type {CanvasRenderingContext2D} */
 const c = mainCanvas.getContext('2d');
@@ -45,6 +52,41 @@ mainCanvas.addEventListener('pointermove', (e) => {
     newPosY = e.clientY;
 });
 
+// drawing rectangle with moving mouse
+mainCanvas.addEventListener('pointerdown', (e) => {
+    if (!isAddingRect) return;
+    const rect = mainCanvas.getBoundingClientRect();
+
+    startPosRect = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    isDragging = true;
+});
+
+mainCanvas.addEventListener('pointerup', (e) => {
+    if (!isAddingRect) return;
+    const bound = mainCanvas.getBoundingClientRect();
+
+    endPosRect = { x: e.clientX - bound.left, y: e.clientY - bound.top };
+
+    const rect = new Rectangle(
+        Math.random().toString(36).slice(2),
+        startPosRect.x,
+        startPosRect.y,
+        endPosRect.x,
+        endPosRect.y,
+        '#2c8dddff',
+        20,
+    );
+    scene.addObstacle(rect);
+
+    isDragging = false;
+    isAddingRect = false;
+    startPosRect.x = null;
+    startPosRect.y = null;
+    endPosRect.x = null;
+    endPosRect.y = null;
+});
+
+// ----------------------  BUTTONS -------------------------
 const addBtn = document.getElementById('addBtn');
 addBtn.onclick = async () => {
     const result = await showModal();
@@ -61,6 +103,9 @@ addBtn.onclick = async () => {
         scene.addRaysToArray(light);
         canvasList.height = Math.max(canvasList.height, 50 * (scene.lights.length + 1));
     } else if (result === '1') {
+        isAddingRect = true;
+        // const rect = new Rectangle(Math.random().toString(36).slice(2), 100, 100, 200, 100, 'blue');
+        // scene.addObstacle(rect);
     } else if (result === '2') {
     } else if (result === '3') {
     }
@@ -91,6 +136,8 @@ deleteBtn.addEventListener('click', () => {
 });
 
 const boxOptions = document.getElementById('light-options');
+
+// ----------------------  INPUTS -------------------------
 
 // amount of rays input
 const inputRay = document.getElementById('input-ray');
@@ -140,14 +187,30 @@ inputColor.addEventListener('input', (e) => {
     });
 });
 
-// --------------------  CONSTS AND VARIABLES  -----------------
+// ===============================================================
+// ===================  CONSTS AND VARIABLES  ====================
+// ===============================================================
+
 const scene = new Scene();
+
+// light
 let newPosX = null;
 let newPosY = null;
+
 let activeLight = null;
+
 let isToDelete = false;
 
-// --------------------  LOGIC  -----------------
+let isDragging = false;
+
+// rectangle obstacle
+let isAddingRect = false;
+let startPosRect = null;
+let endPosRect = null;
+
+// ===============================================================
+// ===========================  LOGIC  ===========================
+// ===============================================================
 function showModal() {
     return new Promise((resolve) => {
         const modal = document.getElementById('modal');
@@ -206,11 +269,23 @@ function clickLightHandling(light) {
     }
 }
 
-// --------------------  MAIN LOOP  -----------------
+// ===============================================================
+// ===========================  MAIN LOOP  =======================
+// ===============================================================
 function animate() {
     scene.update(newPosX, newPosY);
     scene.renderMainCanvas(c, mainCanvas.width, mainCanvas.height);
     scene.renderListCanvas(cL, canvasList.width, canvasList.height);
+
+    // if (startPosRect && endPosRect) {
+    //     c.beginPath();
+    //     c.strokeStyle = 'blue';
+    //     c.lineWidth = 20;
+    //     c.moveTo(startPosRect.x, startPosRect.y);
+    //     c.lineTo(endPosRect.x, endPosRect.y);
+    //     c.stroke();
+    // }
+
     requestAnimationFrame(animate);
 }
 
