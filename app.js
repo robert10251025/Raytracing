@@ -45,6 +45,17 @@ mainCanvas.addEventListener('click', (e) => {
             clickLightHandling(light);
         }
     });
+
+    scene.obstaclesRect.forEach((rect) => {
+        if (isToDelete && rect.isClicked(e.clientX, e.clientY)) {
+            const ind = scene.obstaclesRect.indexOf(rect);
+            scene.obstaclesRect.splice(ind, 1);
+            canvasList.height = Math.min(
+                canvasList.height,
+                50 * (scene.lights.length + 1) + 30 * (scene.obstaclesRect.length + 1),
+            );
+        }
+    });
 });
 
 mainCanvas.addEventListener('pointermove', (e) => {
@@ -58,7 +69,7 @@ mainCanvas.addEventListener('pointerdown', (e) => {
     const rect = mainCanvas.getBoundingClientRect();
 
     startPosRect = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    isDragging = true;
+    // isDragging = true;
 });
 
 mainCanvas.addEventListener('pointerup', (e) => {
@@ -78,17 +89,38 @@ mainCanvas.addEventListener('pointerup', (e) => {
     );
     scene.addObstacle(rect);
 
-    isDragging = false;
-    isAddingRect = false;
+    canvasList.height = Math.max(
+        canvasList.height,
+        50 * (scene.lights.length + 1) + 30 * (scene.obstaclesRect.length + 1),
+    );
+
+    // isDragging = false;
+    // isAddingRect = false;
     startPosRect.x = null;
     startPosRect.y = null;
     endPosRect.x = null;
     endPosRect.y = null;
 });
 
+mainCanvas.addEventListener('mouseenter', () => {
+    isDragging = true;
+});
+
+mainCanvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+});
+
 // ----------------------  BUTTONS -------------------------
 const addBtn = document.getElementById('addBtn');
 addBtn.onclick = async () => {
+    const imgAddButton = document.querySelector('#addBtn img');
+
+    if (isAddingRect) {
+        isAddingRect = false;
+        imgAddButton.src = './assets/plus.png';
+        return;
+    }
+
     const result = await showModal();
     if (result === '0') {
         const light = new LightSource(
@@ -101,14 +133,15 @@ addBtn.onclick = async () => {
         );
         scene.addLight(light);
         scene.addRaysToArray(light);
-        canvasList.height = Math.max(canvasList.height, 50 * (scene.lights.length + 1));
+        canvasList.height = Math.max(
+            canvasList.height,
+            50 * (scene.lights.length + 1) + 30 * (scene.obstaclesRect.length + 1),
+        );
     } else if (result === '1') {
         isAddingRect = true;
-        // const rect = new Rectangle(Math.random().toString(36).slice(2), 100, 100, 200, 100, 'blue');
-        // scene.addObstacle(rect);
+        imgAddButton.src = './assets/plus-green.png';
     } else if (result === '2') {
-    } else if (result === '3') {
-    }
+    } //else if (result === '3') {}
 };
 
 const deleteBtn = document.getElementById('deleteBtn');
@@ -132,7 +165,10 @@ deleteBtn.addEventListener('click', () => {
             isToDelete = false;
         }
     }
-    canvasList.height = Math.min(canvasList.height, 50 * (scene.lights.length + 1));
+    canvasList.height = Math.min(
+        canvasList.height,
+        50 * (scene.lights.length + 1) + 30 * (scene.obstaclesRect.length + 1),
+    );
 });
 
 const boxOptions = document.getElementById('light-options');
@@ -243,7 +279,10 @@ function clickLightHandling(light) {
     // delete light when delete button is mark and light is clicked
     if (isToDelete) {
         deleteLightWithRays(light);
-        canvasList.height = Math.min(canvasList.height, 50 * (scene.lights.length + 1));
+        canvasList.height = Math.min(
+            canvasList.height,
+            50 * (scene.lights.length + 1) + 30 * (scene.obstaclesRect.length + 1),
+        );
         boxOptions.classList.add('hidden');
         return;
     }
@@ -266,6 +305,8 @@ function clickLightHandling(light) {
 
         boxOptions.classList.remove('hidden');
         activeLight = light;
+
+        activeLight.color = '#f4f6ccff';
     }
 }
 
@@ -273,18 +314,11 @@ function clickLightHandling(light) {
 // ===========================  MAIN LOOP  =======================
 // ===============================================================
 function animate() {
-    scene.update(newPosX, newPosY);
+    if (isDragging) {
+        scene.update(newPosX, newPosY);
+    }
     scene.renderMainCanvas(c, mainCanvas.width, mainCanvas.height);
     scene.renderListCanvas(cL, canvasList.width, canvasList.height);
-
-    // if (startPosRect && endPosRect) {
-    //     c.beginPath();
-    //     c.strokeStyle = 'blue';
-    //     c.lineWidth = 20;
-    //     c.moveTo(startPosRect.x, startPosRect.y);
-    //     c.lineTo(endPosRect.x, endPosRect.y);
-    //     c.stroke();
-    // }
 
     requestAnimationFrame(animate);
 }

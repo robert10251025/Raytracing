@@ -13,12 +13,14 @@ export default class LightSource {
         this.rList = null;
     }
 
-    // some methods
+    // methods
     draw(c, x = null, y = null, r = null, color = null) {
+        c.save();
         c.beginPath();
         c.fillStyle = color ? color : this.color;
         c.arc(x ? x : this.x, y ? y : this.y, r ? r : this.r, 0, 2 * Math.PI);
         c.fill();
+        c.restore();
 
         // this.createRays();
 

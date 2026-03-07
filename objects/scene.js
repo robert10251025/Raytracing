@@ -24,7 +24,6 @@ export default class Scene {
     }
 
     addRaysToArray(light) {
-        // this.lights.forEach((light) => {
         const angle = (2 * Math.PI) / light.amountRay;
         for (let i = 0; i < light.amountRay; i++) {
             const dx = Math.cos(i * angle);
@@ -33,7 +32,6 @@ export default class Scene {
             const ray = new Ray(light.id, light.x, light.y, dx, dy);
             this.rays.push(ray);
         }
-        // });
     }
 
     drawLights(c) {
@@ -73,7 +71,7 @@ export default class Scene {
                 }
             }
 
-            // check obstacles <---- TODO
+            // check obstacles
             this.obstaclesRect.forEach((o) => {
                 // equation of straight line (obstacle)
                 const a2 = o.a;
@@ -81,7 +79,7 @@ export default class Scene {
 
                 // point of intersection ray and obstacle
                 const xInter = (b2 - b) / (a - a2);
-                const yInter = a * xInter + b;
+                const yInter = a2 * xInter + b2;
 
                 const t = (xInter - ray.x) * ray.dx + (yInter - ray.y) * ray.dy;
                 if (t <= 0) return;
@@ -99,6 +97,7 @@ export default class Scene {
                     // c.arc(xInter, yInter, 5, 0, Math.PI * 2);
                     // c.fill();
                     // c.restore();
+
                     const l1 = Math.sqrt((xInter - ray.x) ** 2 + (yInter - ray.y) ** 2);
                     l = Math.min(l1, l);
                 }
@@ -148,7 +147,7 @@ export default class Scene {
     }
 
     renderListCanvas(c, width, height) {
-        const offsetY = 10;
+        const offsetY = 20;
         c.clearRect(0, 0, width, height);
         c.fillStyle = '#1a1a1a';
         c.fillRect(0, 0, width, height);
@@ -157,6 +156,27 @@ export default class Scene {
             light.yList = 50 * (ind + 1) + offsetY;
             light.rList = 20;
             light.draw(c, light.xList, light.yList, light.rList, light.color);
+        });
+
+        const beginY = this.lights.length * 50 + offsetY;
+
+        this.obstaclesRect.forEach((rect, ind) => {
+            rect.x1List = width / 2 - 30;
+            rect.x2List = width / 2 + 30;
+            rect.y1List = beginY + 30 * (ind + 1) + offsetY;
+            rect.y2List = beginY + 30 * (ind + 1) + offsetY;
+            rect.wList = 20;
+            // rect.pathList = new Path2D();
+            rect.drawRectLine(
+                c,
+                rect.x1List,
+                rect.y1List,
+                rect.x2List,
+                rect.y2List,
+                rect.wList,
+                rect.color,
+                new Path2D(),
+            );
         });
     }
 }
